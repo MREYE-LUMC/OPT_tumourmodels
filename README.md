@@ -1,12 +1,13 @@
 # OPT Tumour models
 
 These scripts provide methods to generate polynomial tumour models, as commonly used in ocular proton therapy planning, based on 3D tumour delineations. Furthermore, it provides methods to compare the resulting model to the tumour delineations.  
-The full method is described in Klaassen L, Rasch CRN, Beenakker JWM. Comparison of model-based and delineation-based target volume definition for ocular proton therapy. Submitted to Physica Medica (doi not available yet).
+The full method is described in Klaassen L, Rasch CRN, Beenakker JWM. Comparison of model-based and delineation-based target volume definition for ocular proton therapy. _Submitted_ (doi not available yet).
 
 ## Methods  
-_A summary of the methods is shown in this image:
+A summary of the methods is shown in this image:
 
 ![Schematic representation of the method](.github/assets/method.png)
+
 **Figure 1**: Generation of a geometric tumour model from a delineated tumour contour.
 (A) Tumours were delineated (green contour) and the thickness (red line) was determined automatically;
 (B) the tumour base (green line) was extracted from delineation;
@@ -31,10 +32,11 @@ All scripts have been tested in Python 3.12.7. To run the scripts, the following
 - `tqdm`
 
 ## Example  
-An example, which generates tumour models with different shape factors, is provided. This example generates tumour models for the tumour as delineated below (Figure 2).
+An [jupyter notebook example](example.ipynb), which generates tumour models with different shape factors, is provided. This example generates tumour models for the tumour as delineated below (Figure 2).
 
 ![Example tumour delineation](.github/assets/exampledelineation.png)
-**Figure 2:** The example tumour was delineation on a 3D contrast-enhanced T1-weighted MRI-scan.
+
+**Figure 2:** The example tumour was delineation on a 3D contrast-enhanced [T1-weighted MRI-scan](https://mreye.nl/protocols/mri_globe/).
 
 ## Warranty and liability
 
