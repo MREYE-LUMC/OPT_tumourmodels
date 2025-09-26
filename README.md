@@ -32,7 +32,7 @@ All scripts have been tested in Python 3.12.7. To run the scripts, the following
 - `tqdm`
 
 ## Example  
-An [jupyter notebook example](example.ipynb), which generates tumour models with different shape factors, is provided. This example generates tumour models for the tumour as delineated below (Figure 2).
+An [jupyter notebook example](Example.ipynb), which generates tumour models with different shape factors, is provided. This example generates tumour models for the tumour as delineated below (Figure 2).
 
 ![Example tumour delineation](.github/assets/exampledelineation.png)
 
