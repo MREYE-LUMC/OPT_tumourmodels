@@ -1,4 +1,4 @@
-def volume_analysis(tumour, model): 
+def volume_analysis(tumour, model):
     """ Determines several volume comparison metrics for two meshes with a Manifold3D backend.
     Inputs:
     - tumour: trimesh object of tumour
@@ -8,7 +8,6 @@ def volume_analysis(tumour, model):
     - results: gives absolute [mm^3] and relative [%] overlap between tumour and model, overestimation of the tumour by the model, underestimation of the            tumour by the model, and intersetion over union (IoU)
     
     """
-    import manifold3d
     import trimesh
 
     union = trimesh.boolean.union([tumour, model], engine = 'manifold') # ALWAYS USE MANIFOLD3D BECAUSE BLENDER BACKEND GIVES WONKY BOOLEANS
@@ -26,8 +25,8 @@ def volume_analysis(tumour, model):
     IoU = intersection.volume/union.volume
 
     results = {'overlap_abs': overlap_abs, 'overlap_rel': overlap_rel, 'overestimation_abs': overestimation_abs,
-                   'overestimation_rel': overestimation_rel, 'underestimation_abs': underestimation_abs, 
-                   'underestimation_rel': underestimation_rel, 'IoU': IoU} 
+                   'overestimation_rel': overestimation_rel, 'underestimation_abs': underestimation_abs,
+                   'underestimation_rel': underestimation_rel, 'IoU': IoU}
 
     return results
 
@@ -56,7 +55,7 @@ def compute_signed_distances(from_points, to_points, target_mesh):
         else:
             signed_dists.append(dist)
     return signed_dists
-    
+
 def signed_surface_dist(tumour, model, eye):
     """"  Determines signed surface distance metrics for two meshes. Only looks at tumour and model tops, not bases. Except for thickness <2 mm: then entire        tumours. Model OUTSIDE tumour is positive distance, model INSIDE tumour is negative distance
    
@@ -68,16 +67,15 @@ def signed_surface_dist(tumour, model, eye):
     Outputs:
     - alldists: All distances between tumour and model
     - dist_metrics: Median absolute, minimum, 0.5th, 1st, 2nd, 5th, 25th, 50th, 75th, 95th percentile and max of alldists.
-     """ 
+     """
 
-    import numpy as np 
-    import trimesh
-    from scipy.spatial import KDTree
-    from Automatic_measurements import Prom_Centre, LBD
-    
+    import numpy as np
+
+    from Automatic_measurements import Prom_Centre
+
     thickness, thickness_base, thickness_top = Prom_Centre(tumour, eye, include_sclera=False)
 
-    if thickness > 2: # For tumours larger than 2 mm thickness, only use the tumour top. All points inside the shrunk eye mesh are considered tumour top. 
+    if thickness > 2: # For tumours larger than 2 mm thickness, only use the tumour top. All points inside the shrunk eye mesh are considered tumour top.
         cog = eye.center_mass
         shrink_factor = 0.9
         shrink_matrix = [[shrink_factor, 0, 0,0],[0, shrink_factor,0,0], [0,0,shrink_factor,0], [0,0,0,1]]
@@ -93,7 +91,7 @@ def signed_surface_dist(tumour, model, eye):
         points_model = model.sample(10000)
         inside_mask2 = eye_shrunk.contains(points_model)
         model_top = points_model[inside_mask2]
-    
+
         tumour_points = tumour_top
         model_points = model_top
     else:
@@ -105,7 +103,7 @@ def signed_surface_dist(tumour, model, eye):
     dists2 = compute_signed_distances(model_points, tumour_points, tumour)
 
     alldists = dists + dists2
-    
+
     surf_dist_median_abs = np.median(abs(np.array(alldists)))
     surf_dist_min = np.min(np.array(alldists))
     surf_dist_perc_05 = np.percentile(np.array(alldists), 0.5)
@@ -118,7 +116,7 @@ def signed_surface_dist(tumour, model, eye):
     surf_dist_perc_95 = np.percentile(np.array(alldists), 95)
     surf_dist_max = np.max(np.array(alldists))
 
-    dist_metrics  = {'surf_dist_median_abs': surf_dist_median_abs, 'surf_dist_min': surf_dist_min, 'surf_dist_perc_0.5': surf_dist_perc_05,'surf_dist_perc_1': surf_dist_perc_1,'surf_dist_perc_2': surf_dist_perc_2,'surf_dist_perc_5': surf_dist_perc_5, 'surf_dist_perc_25': surf_dist_perc_25, 
+    dist_metrics  = {'surf_dist_median_abs': surf_dist_median_abs, 'surf_dist_min': surf_dist_min, 'surf_dist_perc_0.5': surf_dist_perc_05,'surf_dist_perc_1': surf_dist_perc_1,'surf_dist_perc_2': surf_dist_perc_2,'surf_dist_perc_5': surf_dist_perc_5, 'surf_dist_perc_25': surf_dist_perc_25,
                 'surf_dist_perc_50': surf_dist_perc_50, 'surf_dist_perc_75': surf_dist_perc_75, 'surf_dist_perc_95': surf_dist_perc_95, 'surf_dist_max': surf_dist_max}
-    
+
     return alldists, dist_metrics

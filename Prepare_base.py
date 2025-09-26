@@ -8,15 +8,14 @@ def correct_base(tumour,eye, threshold_angle = 45):
     Output:
     - list of points in new base
      """
-    
-    import trimesh
+
     import numpy as np
-    import matplotlib.pyplot as plt
+    import trimesh
+
     from Automatic_measurements import LBD
-    from Generate_tumour_model import upsample_point_cloud
-    
+
     lbd, lbd_coor1, lbd_coor2, base = LBD(tumour,eye)
-    
+
     angles = []
     indices = []
 
@@ -33,14 +32,14 @@ def correct_base(tumour,eye, threshold_angle = 45):
         vectors = np.ones([1,2,3])
         vectors[0,0,:] = base_normal
         vectors[0,1,:] = eye_normal
-    
+
         angle = np.rad2deg(trimesh.geometry.vector_angle(vectors)) #trimesh function gives angle in radians
         angles.append(angle[0])
 
         # if angle between vectors is smaller than 45 degrees, add point to new (corrected) base
         if angle <threshold_angle:
             indices.append(i)
-    
+
     corrected_base = base.vertices[indices]
     corrected_base_normals = base.vertex_normals[indices]
 
@@ -50,7 +49,7 @@ def correct_base(tumour,eye, threshold_angle = 45):
     #axes.plot(eye.vertices[:,0], eye.vertices[:,1], eye.vertices[:,2], c='w', alpha = 0.8)
     #axes.scatter(tumour.vertices[:,0], tumour.vertices[:,1], tumour.vertices[:,2], c='g', alpha = 0.4, label = 'delineated tumour')
     #axes.scatter(corrected_base[:,0], corrected_base[:,1], corrected_base[:,2], c='b', alpha = 0.4, label = 'corrected tumour base')
-    #plt.title('Corrected tumour base with original delinated tumour')    
+    #plt.title('Corrected tumour base with original delinated tumour')
     return corrected_base, corrected_base_normals
 
 def redefine_prom(tumour,eye, corrected_base, prom_base_orig):
@@ -61,14 +60,14 @@ def redefine_prom(tumour,eye, corrected_base, prom_base_orig):
     - eye: trimesh object of eye
     - corrected_base: list of points in base
     - prom_base_orig: original base point of thickness vector """
-    
-    import trimesh
+
     import numpy as np
-    
+    import trimesh
+
     mmp = eye.center_mass
     apex_coor = trimesh.proximity.closest_point(tumour, np.reshape(eye.center_mass, [1,3]))[0]
     dist_to_top = trimesh.proximity.closest_point(tumour, np.reshape(eye.center_mass, [1,3]))[1]
-    
+
     if dist_to_top <0.4 or tumour.contains(np.reshape(mmp, [1,3])):
         redefined = True
         mean_base_location = np.array([np.mean(corrected_base[:,0]), np.mean(corrected_base[:,1]), np.mean(corrected_base[:,2])])
@@ -91,8 +90,8 @@ def fit_sphere_to_points(points):
     """
     import numpy as np
     from scipy.optimize import leastsq
-    
-    
+
+
     # Define the function to minimize
     def residuals(params, x, y, z):
         xc, yc, zc, r = params
@@ -121,7 +120,7 @@ def generate_sphere_points(center, radius, num_points=10000):
 
     """
     import numpy as np
-    
+
     phi = np.random.uniform(0, np.pi, num_points)
     theta = np.random.uniform(0, 2*np.pi, num_points)
     x = center[0] + radius * np.sin(phi) * np.cos(theta)
@@ -141,8 +140,8 @@ def filter_close_sphere_points(sphere_points, original_points, max_distance=0.00
     - sphere_points which are closer than max_distance to original points
 
     """
-    from scipy.spatial import distance_matrix
     import numpy as np
+    from scipy.spatial import distance_matrix
     dists = distance_matrix(sphere_points, original_points)
     min_dists = np.min(dists, axis=1)
     return sphere_points[min_dists < max_distance]
@@ -153,10 +152,10 @@ def expand_base(corrected_base, max_distance = 1.0):
     - corrected_base: points in the tumour base
     - max_distance: distance with which the base needs to be expanded
     """
-    import numpy as np 
+    import numpy as np
     center, radius = fit_sphere_to_points(corrected_base)
-    sphere_points = generate_sphere_points(center, radius, 50000) 
+    sphere_points = generate_sphere_points(center, radius, 50000)
     close_points = filter_close_sphere_points(sphere_points, corrected_base, max_distance)
-    expanded_base = np.vstack((corrected_base,close_points)) 
+    expanded_base = np.vstack((corrected_base,close_points))
 
     return expanded_base, close_points
