@@ -1,0 +1,23 @@
+# Compiled files
+*.pyc
+*.pyd
+
+# Build files
+build/
+dist/
+zospy.egg-info/
+
+# Tool and cache folders
+.conda/
+.ipynb_checkpoints/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.tox/
+.ruff_cache/
+.venv/
+
+# Editor settings
+.idea/
+.vscode/
+.vs/

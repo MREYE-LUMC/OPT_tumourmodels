@@ -6,7 +6,7 @@ The full method is described in Klaassen L, Rasch CRN, Beenakker JWM. Comparison
 ## Methods  
 _A summary of the methods is shown in this image:
 
-
+![Schematic representation of the method](.github/assets/method.png)
 **Figure 1**: Generation of a geometric tumour model from a delineated tumour contour.
 (A) Tumours were delineated (green contour) and the thickness (red line) was determined automatically;
 (B) the tumour base (green line) was extracted from delineation;
@@ -33,13 +33,17 @@ All scripts have been tested in Python 3.12.7. To run the scripts, the following
 ## Example  
 An example, which generates tumour models with different shape factors, is provided. This example generates tumour models for the tumour as delineated below (Figure 2).
 
+![Example tumour delineation](.github/assets/exampledelineation.png)
 **Figure 2:** The example tumour was delineation on a 3D contrast-enhanced T1-weighted MRI-scan.
 
-## License  
-The code is provided as is, without any warranty, under the MIT license. This license requires that reusers give credit to the creator. It allows reusers to distribute, remix, adapt, and build upon the material in any medium or format.
+## Warranty and liability
+
+The code is provided as is, without any warranty. It is solely intended for research purposes. 
+No warranty is given and no rights can be derived from it, as is also stated in the [MIT license](LICENSE).
+
 
 ## Contact  
 Feel free to contact us for any inquiries:
 
 - L. Klaassen (e-mail)
-- J.W.M. Beenakker (e-mail)
+- J.W.M. Beenakker (jwb@mreye.nl)
