@@ -53,10 +53,10 @@ def correct_base(tumour,eye, threshold_angle = 45):
     return corrected_base, corrected_base_normals
 
 def redefine_prom(tumour,eye, corrected_base, prom_base_orig):
-    """ For tumours with center of eye within tumour (or very close, <0.4 mm), automatic prominence determination is less reliable. 
-    This function replaces the base coordinate with middle of base for these tumours 
+    """ For tumours with center of eye within tumour (or very close, <0.4 mm), automatic prominence determination is less reliable.
+    This function replaces the base coordinate with middle of base for these tumours
     Inputs:
-    - tumour: trimesh object of tumour 
+    - tumour: trimesh object of tumour
     - eye: trimesh object of eye
     - corrected_base: list of points in base
     - prom_base_orig: original base point of thickness vector """
@@ -79,8 +79,8 @@ def redefine_prom(tumour,eye, corrected_base, prom_base_orig):
     return prom_base, redefined
 
 def fit_sphere_to_points(points):
-    """ This function fits a sphere to a 3D point cloud and is needed for the expand_base function. 
-    Inputs: 
+    """ This function fits a sphere to a 3D point cloud and is needed for the expand_base function.
+    Inputs:
     - points: numpy array of points in shape [n,3]
 
     Returns:
@@ -109,7 +109,7 @@ def fit_sphere_to_points(points):
     return np.array([xc, yc, zc]), r
 
 def generate_sphere_points(center, radius, num_points=10000):
-    """ This function generates points on a sphere and is needed for the expand_base function. 
+    """ This function generates points on a sphere and is needed for the expand_base function.
     Inputs:
     - center: numpy array with center location of sphere
     - radius: radius of the sphere
@@ -130,13 +130,13 @@ def generate_sphere_points(center, radius, num_points=10000):
 
 def filter_close_sphere_points(sphere_points, original_points, max_distance=0.001):
     """ This function filters a numpy array of points on a sphere and lets through points with a very small distance (max_distance) to the original points.
-    It's needed for the expand_base function. 
-    Inputs: 
+    It's needed for the expand_base function.
+    Inputs:
     - sphere_points: numpy array of points on the sphere
     - original_points: numpy array of original points to compare the sphere points to
     - max_distance: allowed distance between points
 
-    Returns: 
+    Returns:
     - sphere_points which are closer than max_distance to original points
 
     """
@@ -147,7 +147,7 @@ def filter_close_sphere_points(sphere_points, original_points, max_distance=0.00
     return sphere_points[min_dists < max_distance]
 
 def expand_base(corrected_base, max_distance = 1.0):
-    """ This function expands the tumour base with max_distance. Needs the functions fit_sphere_to_points, generate_sphere_points, and                filter_close_sphere_points. 
+    """ This function expands the tumour base with max_distance. Needs the functions fit_sphere_to_points, generate_sphere_points, and                filter_close_sphere_points.
     Inputs:
     - corrected_base: points in the tumour base
     - max_distance: distance with which the base needs to be expanded

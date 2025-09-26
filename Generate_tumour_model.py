@@ -1,11 +1,11 @@
 def model_height(thickness,d,d_max,sf):
     """ This function determines the height of the tumour model for each point in the tumour base
-    Inputs: 
+    Inputs:
     - thickness: maximum thickness of the tumour [mm]
     - d: distance from center of base to the point in the tumour base
     - d_max: distance from center of base to edge of the base, in the same direction as d
     - sf: chosen shape factor (degree of the polynomial, typically 1-10 with 1 being like a pyramid and 10 being like a cube)
-    
+
     Outputs:
     - z: height of the tumour model at the specified point in the tumour base
 
@@ -16,12 +16,12 @@ def model_height(thickness,d,d_max,sf):
 
 def directed_angle_between_vectors(v1,v2):
     """ This function determines the angle in degrees between vector 1 and vector 2. Gives values between 0 and 360 degrees (clockwise), with x-axis being 0        degrees.
-    Inputs: 
+    Inputs:
     - v1: first vector, shape [2,]
     - v2: second vector, shape [2,]
 
     Outputs:
-    - angle in degrees 
+    - angle in degrees
     """
     import numpy as np
     x1,y1 = v1
@@ -42,10 +42,10 @@ def generate_tumour_model(tumour,eye, corrected_base, sf):
     - eye: trimesh object of eye
     - corrected_base: list of points in tumour base with shape [n,3]. Can be generated with def correct_base
     - sf: chosen shape factor (degree of the polynomial, typically 1-10 with 1 being like a pyramid and 10 being like a cube)
-    
+
     Outputs:
     - tumour_model_rot_transl: list of points for generated tumour model
-    
+
     """
     import logging
 
@@ -221,13 +221,13 @@ def generate_tumour_model(tumour,eye, corrected_base, sf):
     return tumour_model_rot_transl
 
 def generate_tumour_model_extrathickness(tumour,eye, corrected_base, sf, addedthickness):
-    """ This function creates a tumour model based on a delineated tumour, with added thickness 
+    """ This function creates a tumour model based on a delineated tumour, with added thickness
     Inputs:
     - tumour: trimesh object of tumour delineation
     - eye: trimesh object of eye
     - corrected_base: list of points in tumour base with shape [n,3]. Can be generated with def correct_base
     - sf: chosen shape factor (degree of the polynomial, typically 1-10 with 1 being like a pyramid and 10 being like a cube)
-    - addedthickness: amount of added thickness [mm] 
+    - addedthickness: amount of added thickness [mm]
     
     Outputs:
     - tumour_model_rot_transl: list of points for generated tumour model """

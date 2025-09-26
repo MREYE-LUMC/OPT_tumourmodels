@@ -1,12 +1,12 @@
 
 def Prom_Centre(tumour, eye_cc, sclera_tumour='None', include_sclera = True):
-    """ 
+    """
     Prominence (=thickness) through centre of the eye and apex of tumour (apex defined by closest point to eye centre)
-    Inputs: 
+    Inputs:
         tumour: trimesh object of tumour
         eye_cc: trimesh object of eye contour through ciliary body
-        sclera_tumour: trimesh object of tumour including sclera 
-        include_sclera: boolean, set to True if prominence should be measured including sclera 
+        sclera_tumour: trimesh object of tumour including sclera
+        include_sclera: boolean, set to True if prominence should be measured including sclera
     Outputs: prom_centre, top_coor, base_coor
     """
     import warnings
@@ -60,7 +60,7 @@ def Prom_Centre(tumour, eye_cc, sclera_tumour='None', include_sclera = True):
     return prom_centre,  base_coor, top_coor
 
 def LBD(tumour,eye):
-    """ 
+    """
     Calculation of largest basal diameter
     Inputs: trimesh object of tumour and eye
     Outputs: LBD, lbd_coor1, lbd_coor2

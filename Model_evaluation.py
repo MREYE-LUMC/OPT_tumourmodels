@@ -2,11 +2,11 @@ def volume_analysis(tumour, model):
     """ Determines several volume comparison metrics for two meshes with a Manifold3D backend.
     Inputs:
     - tumour: trimesh object of tumour
-    - model: trimesh object of tumour model 
+    - model: trimesh object of tumour model
 
     Outputs:
     - results: gives absolute [mm^3] and relative [%] overlap between tumour and model, overestimation of the tumour by the model, underestimation of the            tumour by the model, and intersetion over union (IoU)
-    
+
     """
     import trimesh
 
@@ -32,9 +32,9 @@ def volume_analysis(tumour, model):
 
 
 def compute_signed_distances(from_points, to_points, target_mesh):
-    """ This function is used in signed_surface_dist and computes signed distances between two point clouds using KDTree. 
-    The sign is dependent on target_mesh: if the point is inside target_mesh, distance will be negative. If not, distance will be positive. 
-    Inputs: 
+    """ This function is used in signed_surface_dist and computes signed distances between two point clouds using KDTree.
+    The sign is dependent on target_mesh: if the point is inside target_mesh, distance will be negative. If not, distance will be positive.
+    Inputs:
     - from_points: points from where to determine distance
     - to_points: points to which to determine distance
     - target_mesh: trimesh object with target mesh (in our case: tumour)
@@ -58,11 +58,11 @@ def compute_signed_distances(from_points, to_points, target_mesh):
 
 def signed_surface_dist(tumour, model, eye):
     """"  Determines signed surface distance metrics for two meshes. Only looks at tumour and model tops, not bases. Except for thickness <2 mm: then entire        tumours. Model OUTSIDE tumour is positive distance, model INSIDE tumour is negative distance
-   
+    
     Inputs:
     - tumour: trimesh object of tumour
-    - model: trimesh object of tumour model 
-    - eye: trimesh object of eye 
+    - model: trimesh object of tumour model
+    - eye: trimesh object of eye
 
     Outputs:
     - alldists: All distances between tumour and model
