@@ -1,3 +1,9 @@
+import warnings
+
+import numpy as np
+import trimesh
+from scipy.spatial.distance import pdist, squareform
+
 
 def Prom_Centre(tumour, eye_cc, sclera_tumour='None', include_sclera = True):
     """
@@ -9,10 +15,6 @@ def Prom_Centre(tumour, eye_cc, sclera_tumour='None', include_sclera = True):
         include_sclera: boolean, set to True if prominence should be measured including sclera
     Outputs: prom_centre, top_coor, base_coor
     """
-    import warnings
-
-    import numpy as np
-    import trimesh
 
     mmp = eye_cc.center_mass
 
@@ -65,9 +67,7 @@ def LBD(tumour,eye):
     Inputs: trimesh object of tumour and eye
     Outputs: LBD, lbd_coor1, lbd_coor2
     """
-    import numpy as np
-    import trimesh
-    from scipy.spatial.distance import pdist, squareform
+
 
     # Create base using a shrunk eye contour that does not reach the choroid
     cog = eye.center_mass
@@ -98,7 +98,6 @@ def rotation_matrix_from_vectors(vec1, vec2):
     Outputs:
     - rotation_matrix: A transform matrix (3x3) which when applied to vec1, aligns it with vec2.
     """
-    import numpy as np
     a, b = (vec1 / np.linalg.norm(vec1)).reshape(3), (vec2 / np.linalg.norm(vec2)).reshape(3)
     v = np.cross(a, b)
     c = np.dot(a, b)

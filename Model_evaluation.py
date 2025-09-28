@@ -1,3 +1,10 @@
+import numpy as np
+import trimesh
+from scipy.spatial import KDTree
+
+from Automatic_measurements import Prom_Centre
+
+
 def volume_analysis(tumour, model):
     """ Determines several volume comparison metrics for two meshes with a Manifold3D backend.
     Inputs:
@@ -8,7 +15,7 @@ def volume_analysis(tumour, model):
     - results: gives absolute [mm^3] and relative [%] overlap between tumour and model, overestimation of the tumour by the model, underestimation of the            tumour by the model, and intersetion over union (IoU)
 
     """
-    import trimesh
+
 
     union = trimesh.boolean.union([tumour, model], engine = 'manifold') # ALWAYS USE MANIFOLD3D BECAUSE BLENDER BACKEND GIVES WONKY BOOLEANS
     intersection = trimesh.boolean.intersection([tumour, model], engine = 'manifold') # ALWAYS USE MANIFOLD3D BECAUSE BLENDER BACKEND GIVES WONKY BOOLEANS
@@ -42,7 +49,6 @@ def compute_signed_distances(from_points, to_points, target_mesh):
     Output:
     - signed_dists: list of signed distances (only in direction from "from_points" to "to_points" and not the other way around)
     """
-    from scipy.spatial import KDTree
     tree = KDTree(to_points)
     dists, idx = tree.query(from_points)
     nearest_points = to_points[idx]
@@ -68,10 +74,6 @@ def signed_surface_dist(tumour, model, eye):
     - alldists: All distances between tumour and model
     - dist_metrics: Median absolute, minimum, 0.5th, 1st, 2nd, 5th, 25th, 50th, 75th, 95th percentile and max of alldists.
      """
-
-    import numpy as np
-
-    from Automatic_measurements import Prom_Centre
 
     thickness, thickness_base, thickness_top = Prom_Centre(tumour, eye, include_sclera=False)
 

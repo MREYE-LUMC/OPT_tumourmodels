@@ -1,3 +1,18 @@
+import logging
+
+import alphashape
+import numpy as np
+import pymeshfix
+import scipy
+import trimesh
+from shapely.geometry import Polygon
+from sklearn.neighbors import NearestNeighbors
+from tqdm.auto import tqdm
+
+from Automatic_measurements import LBD, Prom_Centre, rotation_matrix_from_vectors
+from Prepare_base import redefine_prom
+
+
 def model_height(thickness,d,d_max,sf):
     """ This function determines the height of the tumour model for each point in the tumour base
     Inputs:
@@ -23,7 +38,7 @@ def directed_angle_between_vectors(v1,v2):
     Outputs:
     - angle in degrees
     """
-    import numpy as np
+
     x1,y1 = v1
     x2,y2 = v2
 
@@ -47,15 +62,7 @@ def generate_tumour_model(tumour,eye, corrected_base, sf):
     - tumour_model_rot_transl: list of points for generated tumour model
 
     """
-    import logging
 
-    import alphashape
-    import numpy as np
-    import scipy
-    from shapely.geometry import Polygon
-
-    from Automatic_measurements import LBD, Prom_Centre, rotation_matrix_from_vectors
-    from Prepare_base import redefine_prom
     logging.getLogger().setLevel(logging.ERROR)
 
     prom,  prom_base_orig, prom_top = Prom_Centre(tumour,eye, include_sclera = False)
@@ -232,16 +239,6 @@ def generate_tumour_model_extrathickness(tumour,eye, corrected_base, sf, addedth
     Outputs:
     - tumour_model_rot_transl: list of points for generated tumour model """
 
-
-    import logging
-
-    import alphashape
-    import numpy as np
-    import scipy
-    from shapely.geometry import Polygon
-
-    from Automatic_measurements import LBD, Prom_Centre, rotation_matrix_from_vectors
-    from Prepare_base import redefine_prom
     logging.getLogger().setLevel(logging.ERROR)
 
     prom,  prom_base_orig, prom_top = Prom_Centre(tumour,eye, include_sclera = False)
@@ -406,9 +403,6 @@ def generate_tumour_model_extrathickness(tumour,eye, corrected_base, sf, addedth
 
     return tumour_model_rot_transl
 
-
-
-
 def upsample_point_cloud(points, factor=10, k=10):
     """
     Upsample a 3D point cloud by interpolating between nearest neighbors.
@@ -422,8 +416,7 @@ def upsample_point_cloud(points, factor=10, k=10):
     - upsampled_points: (m, 3) NumPy array of upsampled points.
     - new_points: points that were added, (m-n,3) NumPy array
     """
-    import numpy as np
-    from sklearn.neighbors import NearestNeighbors
+
     num_new_points = int((factor - 1) * len(points))
 
     # Find nearest neighbors
@@ -462,10 +455,7 @@ def save_point_cloud_as_stl(points, filename, alpha = 0.15, max_attempts=5):
     - None
     
     """
-    import alphashape
-    import pymeshfix
-    import trimesh
-    from tqdm.auto import tqdm
+
 
     attempts = 0
 

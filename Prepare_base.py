@@ -1,3 +1,11 @@
+import numpy as np
+import trimesh
+from scipy.optimize import leastsq
+from scipy.spatial import distance_matrix
+
+from Automatic_measurements import LBD
+
+
 def correct_base(tumour,eye, threshold_angle = 45):
     """ This function generates a tumour base, based on a tumour delineation. All points with an angle between normal of  point and normal of corresponding eye          point below the threshold angle are considered tumour base
     Inputs:
@@ -8,11 +16,6 @@ def correct_base(tumour,eye, threshold_angle = 45):
     Output:
     - list of points in new base
      """
-
-    import numpy as np
-    import trimesh
-
-    from Automatic_measurements import LBD
 
     lbd, lbd_coor1, lbd_coor2, base = LBD(tumour,eye)
 
@@ -61,8 +64,7 @@ def redefine_prom(tumour,eye, corrected_base, prom_base_orig):
     - corrected_base: list of points in base
     - prom_base_orig: original base point of thickness vector """
 
-    import numpy as np
-    import trimesh
+
 
     mmp = eye.center_mass
     apex_coor = trimesh.proximity.closest_point(tumour, np.reshape(eye.center_mass, [1,3]))[0]
@@ -88,9 +90,6 @@ def fit_sphere_to_points(points):
     - radius of the sphere
 
     """
-    import numpy as np
-    from scipy.optimize import leastsq
-
 
     # Define the function to minimize
     def residuals(params, x, y, z):
@@ -119,7 +118,6 @@ def generate_sphere_points(center, radius, num_points=10000):
     - numpy array of points with length num_points
 
     """
-    import numpy as np
 
     phi = np.random.uniform(0, np.pi, num_points)
     theta = np.random.uniform(0, 2*np.pi, num_points)
@@ -140,8 +138,7 @@ def filter_close_sphere_points(sphere_points, original_points, max_distance=0.00
     - sphere_points which are closer than max_distance to original points
 
     """
-    import numpy as np
-    from scipy.spatial import distance_matrix
+
     dists = distance_matrix(sphere_points, original_points)
     min_dists = np.min(dists, axis=1)
     return sphere_points[min_dists < max_distance]
@@ -152,7 +149,7 @@ def expand_base(corrected_base, max_distance = 1.0):
     - corrected_base: points in the tumour base
     - max_distance: distance with which the base needs to be expanded
     """
-    import numpy as np
+
     center, radius = fit_sphere_to_points(corrected_base)
     sphere_points = generate_sphere_points(center, radius, 50000)
     close_points = filter_close_sphere_points(sphere_points, corrected_base, max_distance)
