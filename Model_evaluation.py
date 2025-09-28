@@ -2,7 +2,7 @@ import numpy as np
 import trimesh
 from scipy.spatial import KDTree
 
-from Automatic_measurements import Prom_Centre
+from Automatic_measurements import calc_Prom_Centre
 
 
 def volume_analysis(tumour, model):
@@ -75,7 +75,7 @@ def signed_surface_dist(tumour, model, eye):
     - dist_metrics: Median absolute, minimum, 0.5th, 1st, 2nd, 5th, 25th, 50th, 75th, 95th percentile and max of alldists.
      """
 
-    thickness, thickness_base, thickness_top = Prom_Centre(tumour, eye, include_sclera=False)
+    thickness, thickness_base, thickness_top = calc_Prom_Centre(tumour, eye, include_sclera=False)
 
     if thickness > 2: # For tumours larger than 2 mm thickness, only use the tumour top. All points inside the shrunk eye mesh are considered tumour top.
         cog = eye.center_mass

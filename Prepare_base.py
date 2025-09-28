@@ -3,7 +3,7 @@ import trimesh
 from scipy.optimize import leastsq
 from scipy.spatial import distance_matrix
 
-from Automatic_measurements import LBD
+from Automatic_measurements import calc_LBD
 
 
 def correct_base(tumour,eye, threshold_angle = 45):
@@ -17,7 +17,7 @@ def correct_base(tumour,eye, threshold_angle = 45):
     - list of points in new base
      """
 
-    lbd, lbd_coor1, lbd_coor2, base = LBD(tumour,eye)
+    lbd, lbd_coor1, lbd_coor2, base = calc_LBD(tumour,eye)
 
     angles = []
     indices = []

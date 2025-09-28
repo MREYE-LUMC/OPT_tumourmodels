@@ -5,7 +5,7 @@ import trimesh
 from scipy.spatial.distance import pdist, squareform
 
 
-def Prom_Centre(tumour, eye_cc, sclera_tumour='None', include_sclera = True):
+def calc_Prom_Centre(tumour, eye_cc, sclera_tumour='None', include_sclera = True):
     """
     Prominence (=thickness) through centre of the eye and apex of tumour (apex defined by closest point to eye centre)
     Inputs:
@@ -61,7 +61,7 @@ def Prom_Centre(tumour, eye_cc, sclera_tumour='None', include_sclera = True):
 
     return prom_centre,  base_coor, top_coor
 
-def LBD(tumour,eye):
+def calc_LBD(tumour,eye):
     """
     Calculation of largest basal diameter
     Inputs: trimesh object of tumour and eye

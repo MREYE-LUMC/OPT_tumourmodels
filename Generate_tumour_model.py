@@ -9,7 +9,7 @@ from shapely.geometry import Polygon
 from sklearn.neighbors import NearestNeighbors
 from tqdm.auto import tqdm
 
-from Automatic_measurements import LBD, Prom_Centre, rotation_matrix_from_vectors
+from Automatic_measurements import calc_LBD, calc_Prom_Centre, rotation_matrix_from_vectors
 from Prepare_base import redefine_prom
 
 
@@ -65,8 +65,8 @@ def generate_tumour_model(tumour,eye, corrected_base, sf):
 
     logging.getLogger().setLevel(logging.ERROR)
 
-    prom,  prom_base_orig, prom_top = Prom_Centre(tumour,eye, include_sclera = False)
-    lbd, lbd_coor1, lbd_coor2, base = LBD(tumour,eye)
+    prom,  prom_base_orig, prom_top = calc_Prom_Centre(tumour,eye, include_sclera = False)
+    lbd, lbd_coor1, lbd_coor2, base = calc_LBD(tumour,eye)
 
     # Step 1: For tumours with center of eye within tumour, automatic prominence determination is less reliable.
     # Replace base coordinate with middle of base for these tumours
@@ -241,8 +241,8 @@ def generate_tumour_model_extrathickness(tumour,eye, corrected_base, sf, addedth
 
     logging.getLogger().setLevel(logging.ERROR)
 
-    prom,  prom_base_orig, prom_top = Prom_Centre(tumour,eye, include_sclera = False)
-    lbd, lbd_coor1, lbd_coor2, base = LBD(tumour,eye)
+    prom,  prom_base_orig, prom_top = calc_Prom_Centre(tumour,eye, include_sclera = False)
+    lbd, lbd_coor1, lbd_coor2, base = calc_LBD(tumour,eye)
 
     # Step 1: For tumours with center of eye within tumour, automatic prominence determination is less reliable.
     # Replace base coordinate with middle of base for these tumours
