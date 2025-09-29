@@ -28,7 +28,6 @@ All scripts have been tested in Python 3.12.7. To run the scripts, the following
 - `Manifold3d` (version 3.0.1)
 - `Shapely` (version 2.0.6)
 - `Sklearn` (version 1.5.1)
-- `Warnings`
 - `tqdm`
 
 ## Example  
