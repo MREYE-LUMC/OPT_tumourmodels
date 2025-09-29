@@ -46,5 +46,5 @@ No warranty is given and no rights can be derived from it, as is also stated in 
 ## Contact  
 Feel free to contact us for any inquiries:
 
-- L. Klaassen (e-mail)
-- J.W.M. Beenakker (jwb@mreye.nl)
+- L. Klaassen ([l.klaassen@lumc.nl](mailto:l.klaassen@lumc.nl))
+- J.W.M. Beenakker ([jwb@mreye.nl](mailto:jwb@mreye.nl))
