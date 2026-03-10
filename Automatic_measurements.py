@@ -44,8 +44,8 @@ def calc_Prom_Centre(
 
     mmp = eye_cc.center_mass
 
-    apex_coor, dist_to_top, *_ = trimesh.proximity.closest_point(
-        tumour, np.reshape(eye_cc.center_mass, [1, 3])
+    apex_coor, (dist_to_top, *_), *_ = trimesh.proximity.closest_point(
+        tumour, np.reshape(eye_cc.center_mass, (1, 3))
     )
 
     if dist_to_top < 0.4:
@@ -54,12 +54,12 @@ def calc_Prom_Centre(
         )
 
     # Finding intersection with sclera at tumour base
-    origins = np.reshape([mmp], [1, 3])
+    origins = np.reshape(mmp, (1, 3))
 
-    if not tumour.contains(np.reshape(mmp, [1, 3])):
-        directions = np.reshape([apex_coor - mmp], [1, 3])
-    if tumour.contains(np.reshape(mmp, [1, 3])):
-        directions = np.reshape([mmp - apex_coor], [1, 3])
+    if not tumour.contains(origins):
+        directions = np.reshape(apex_coor - mmp, (1, 3))
+    elif tumour.contains(origins):
+        directions = np.reshape(mmp - apex_coor, (1, 3))
         warnings.warn("Center of mass is inside tumour, manually check result")
 
     intersector_tumour = (
