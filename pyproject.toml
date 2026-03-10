@@ -1,0 +1,25 @@
+[project]
+name = "OPT_tumourmodels"
+version = "0.1.0"
+description = "Generate polynomial tumour models, as commonly used in ocular proton therapy, based on 3D tumour delineations."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alphashape==1.3.1",
+    "manifold3d==3.0.1",
+    "matplotlib==3.9.2",
+    "numpy==1.26.4",
+    "openpyxl>=3.1.5",
+    "pandas==2.2.2",
+    "pymeshfix==0.17.0",
+    "scikit-learn==1.5.1",
+    "scipy==1.13.1",
+    "shapely==2.0.6",
+    "tqdm>=4.67.3",
+    "trimesh==4.5.3",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.2.0",
+]

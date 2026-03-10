@@ -5,83 +5,128 @@ import trimesh
 from scipy.spatial.distance import pdist, squareform
 
 
-def calc_Prom_Centre(tumour, eye_cc, sclera_tumour='None', include_sclera = True):
-    """
-    Prominence (=thickness) through centre of the eye and apex of tumour (apex defined by closest point to eye centre)
-    Inputs:
-        tumour: trimesh object of tumour
-        eye_cc: trimesh object of eye contour through ciliary body
-        sclera_tumour: trimesh object of tumour including sclera
-        include_sclera: boolean, set to True if prominence should be measured including sclera
-    Outputs: prom_centre, top_coor, base_coor
+def calc_Prom_Centre(
+    tumour: trimesh.Trimesh,
+    eye_cc: trimesh.Trimesh,
+    sclera_tumour: trimesh.Trimesh | None = None,
+    include_sclera: bool = True,
+    return_all_prominences: bool = False,
+) -> (
+    tuple[float, np.ndarray, np.ndarray]
+    | tuple[float, np.ndarray, np.ndarray, list[tuple[float, np.ndarray]]]
+):
+    """Calculate the prominence (=thickness) through centre of the eye and apex of tumour (apex defined by closest point to eye centre)
+
+    Parameters
+    ----------
+    tumour : trimesh.Trimesh
+        Trimesh object of tumour
+    eye_cc : trimesh.Trimesh
+        Trimesh object of eye contour through ciliary body
+    sclera_tumour : trimesh.Trimesh | None, optional
+        Trimesh object of tumour including sclera, by default None
+    include_sclera : bool, optional
+        Boolean, set to True if prominence should be measured including sclera, by default True
+    return_all_prominences : bool, optional
+        Boolean, set to True if all prominences and their corresponding coordinates should be returned, by default False
+
+    Returns
+    -------
+    float
+        Prominence
+    np.ndarray
+        Base coordinate
+    np.ndarray
+        Top coordinate
+    list[tuple[float, np.ndarray]]
+        List of tuples containing prominences and their corresponding coordinates. Only returned if return_all_prominences is set to True.
     """
 
     mmp = eye_cc.center_mass
 
-    apex_coor = trimesh.proximity.closest_point(tumour, np.reshape(eye_cc.center_mass, [1,3]))[0]
+    apex_coor, (dist_to_top, *_), *_ = trimesh.proximity.closest_point(
+        tumour, np.reshape(eye_cc.center_mass, (1, 3))
+    )
 
-    dist_to_top = trimesh.proximity.closest_point(tumour, np.reshape(eye_cc.center_mass, [1,3]))[1]
     if dist_to_top < 0.4:
-        warnings.warn('Warning: distance to top is smaller than 0.4 mm, manually check result')
+        warnings.warn(
+            "Warning: distance to top is smaller than 0.4 mm, manually check result"
+        )
 
     # Finding intersection with sclera at tumour base
-    origins = np.reshape([mmp],[1,3])
+    origins = np.reshape(mmp, (1, 3))
 
-    if not tumour.contains(np.reshape(mmp, [1,3])):
-        directions = np.reshape([apex_coor-mmp], [1,3])
-    if tumour.contains(np.reshape(mmp, [1,3])):
-        directions = np.reshape([mmp-apex_coor], [1,3])
-        warnings.warn('Center of mass is inside tumour, manually check result')
+    if not tumour.contains(origins):
+        directions = np.reshape(apex_coor - mmp, (1, 3))
+    elif tumour.contains(origins):
+        directions = np.reshape(mmp - apex_coor, (1, 3))
+        warnings.warn("Center of mass is inside tumour, manually check result")
 
-    if include_sclera == True:
-        intersector_tumour = trimesh.ray.ray_triangle.RayMeshIntersector(sclera_tumour)
-    if include_sclera == False:
-        intersector_tumour = trimesh.ray.ray_triangle.RayMeshIntersector(tumour)
+    intersector_tumour = (
+        trimesh.ray.ray_triangle.RayMeshIntersector(sclera_tumour)
+        if include_sclera
+        else trimesh.ray.ray_triangle.RayMeshIntersector(tumour)
+    )
 
-    intersect_coordinates = intersector_tumour.intersects_id(origins, directions, return_locations=True, multiple_hits=True)
+    *_, intersect_coordinates = intersector_tumour.intersects_id(
+        origins, directions, return_locations=True, multiple_hits=True
+    )
 
     # Calculating prominence
     top_coor = apex_coor[0]
-    prom_centre1 = np.sqrt((intersect_coordinates[2][0][0]-top_coor[0])**2 + (intersect_coordinates[2][0][1]-top_coor[1])**2 + (intersect_coordinates[2][0][2]-top_coor[2])**2)
+    prominences: list[tuple[float, np.ndarray]] = []
+    max_prominence = 0.0
+    base_coor = None
 
-    # These if statements are needed because the multiple hits from intersects_id are not in a logical order
-    if len(intersect_coordinates[2]) > 1:
-        prom_centre2 = np.sqrt((intersect_coordinates[2][1][0]-top_coor[0])**2 + (intersect_coordinates[2][1][1]-top_coor[1])**2 + (intersect_coordinates[2][1][2]-top_coor[2])**2)
+    for coord in intersect_coordinates:
+        if np.array_equal(coord, top_coor):
+            continue
 
-        if prom_centre2 > prom_centre1:
-            prom_centre = prom_centre2
-            base_coor = intersect_coordinates[2][1]
-        else:
-            prom_centre = prom_centre1
-            base_coor = intersect_coordinates[2][0]
+        prominence = float(np.linalg.norm(coord - top_coor))
+        prominences.append((prominence, coord))
 
-    else:
-        prom_centre = prom_centre1
-        base_coor = intersect_coordinates[2][0]
+        if prominence > max_prominence:
+            max_prominence = prominence
+            base_coor = coord
 
-    return prom_centre,  base_coor, top_coor
+    if base_coor is None:
+        raise ValueError(
+            "No valid base intersection found. Please check the input meshes."
+        )
 
-def calc_LBD(tumour,eye):
+    if return_all_prominences:
+        return max_prominence, base_coor, top_coor, prominences
+
+    return max_prominence, base_coor, top_coor
+
+
+def calc_LBD(tumour, eye):
     """
     Calculation of largest basal diameter
     Inputs: trimesh object of tumour and eye
     Outputs: LBD, lbd_coor1, lbd_coor2
     """
 
-
     # Create base using a shrunk eye contour that does not reach the choroid
     cog = eye.center_mass
     shrink_factor = 0.90
-    shrink_matrix = [[shrink_factor, 0, 0,0],[0, shrink_factor,0,0], [0,0,shrink_factor,0], [0,0,0,1]]
+    shrink_matrix = [
+        [shrink_factor, 0, 0, 0],
+        [0, shrink_factor, 0, 0],
+        [0, 0, shrink_factor, 0],
+        [0, 0, 0, 1],
+    ]
 
     eye_shrunk = eye.apply_transform(shrink_matrix)
 
-    transl = cog - eye_shrunk.center_mass #The scaling shifts center of mass, translating it back to original place again
+    transl = (
+        cog - eye_shrunk.center_mass
+    )  # The scaling shifts center of mass, translating it back to original place again
     eye_shrunk.apply_translation(transl)
-    base = trimesh.boolean.difference([tumour,eye_shrunk], engine = 'manifold')
+    base = trimesh.boolean.difference([tumour, eye_shrunk], engine="manifold")
 
     # find LBD
-    lbd_dist = squareform(pdist(base.vertices, 'euclidean'))
+    lbd_dist = squareform(pdist(base.vertices, "euclidean"))
     lbd = np.max(lbd_dist)
     idx_lbd = np.unravel_index(lbd_dist.argmax(), lbd_dist.shape)
     lbd_coor1 = base.vertices[idx_lbd[0]]
@@ -89,20 +134,23 @@ def calc_LBD(tumour,eye):
 
     return lbd, lbd_coor1, lbd_coor2, base
 
+
 def rotation_matrix_from_vectors(vec1, vec2):
-    """ Find the rotation matrix that aligns vec1 to vec2
+    """Find the rotation matrix that aligns vec1 to vec2
     Inputs:
     - vec1: A 3d "source" vector
     - vec2: A 3d "destination" vector
-    
+
     Outputs:
     - rotation_matrix: A transform matrix (3x3) which when applied to vec1, aligns it with vec2.
     """
-    a, b = (vec1 / np.linalg.norm(vec1)).reshape(3), (vec2 / np.linalg.norm(vec2)).reshape(3)
+    a, b = (
+        (vec1 / np.linalg.norm(vec1)).reshape(3),
+        (vec2 / np.linalg.norm(vec2)).reshape(3),
+    )
     v = np.cross(a, b)
     c = np.dot(a, b)
     s = np.linalg.norm(v)
     kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
-    rotation_matrix = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
+    rotation_matrix = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s**2))
     return rotation_matrix
-
